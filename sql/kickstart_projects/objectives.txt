@@ -1,0 +1,70 @@
+For a data analyst using SQL to analyze a Kickstarter projects dataset, the business objectives are centered around providing actionable insights that can help a project creator or even Kickstarter itself make better decisions. The core goal is to understand the factors that lead to a project's success or failure.
+
+Here are some key business objectives, broken down by the type of insights they provide:
+
+1. Identifying Success Factors for Project Creators
+
+This is the most common and valuable objective. The analysis aims to give project creators a data-driven guide to launching a successful campaign.
+
+    Objective: Determine the key characteristics of successful projects.
+
+        Questions to answer with SQL:
+
+            Which category has the highest success rate? (e.g., Dance, Comics, Music)
+
+            What is the optimal funding goal range for a project? How does the goal amount relate to success?
+
+            What is the ideal duration for a campaign? Do longer or shorter campaigns tend to be more successful?
+
+            Does the launch month or season have an impact on a project's success rate?
+
+            Which countries have the highest success rates?
+
+2. Optimizing Campaign Strategy
+
+These objectives go beyond simple success rates and provide more nuanced recommendations for a new campaign.
+
+    Objective: Advise a project creator on their campaign strategy.
+
+        Questions to answer with SQL:
+
+            What is the average number of backers needed to successfully fund a project in a specific category?
+
+            How much money is typically pledged per backer for different project types?
+
+            Identify the most successful project creators or projects with the highest percentage of pledged funds relative to their goals. This can highlight "exploding" or viral campaigns.
+
+3. Understanding Platform Trends for Kickstarter (as a Business)
+
+This type of analysis is valuable if you are a data analyst working for Kickstarter itself. The goal is to improve the platform's overall health and performance.
+
+    Objective: Uncover trends and opportunities for the platform.
+
+        Questions to answer with SQL:
+
+            How has the number of projects and their success rates changed over the years?
+
+            What are the top-performing categories in terms of total pledged amount or number of backers?
+
+            Are there any emerging categories or countries that are showing significant growth in project launches or success?
+
+            Identify any trends in project failures (e.g., are they failing because of a lack of backers or because the funding goal was too high?).
+
+4. Data Quality and Preliminary Analysis
+
+Before diving into complex analysis, these objectives ensure the data is clean and ready to be used. This is a crucial first step in any data project.
+
+    Objective: Prepare and explore the dataset for analysis.
+
+        Questions to answer with SQL:
+
+            Check for missing values in key columns (goal, pledged, backers, etc.).
+
+            Identify and handle data type inconsistencies (e.g., ensuring numerical columns are stored as numbers).
+
+            Clean and standardize text data, such as category names.
+
+            Convert currency to a single standard (e.g., USD) to enable comparisons across projects from different countries.
+
+By focusing on these business objectives, your SQL data analytics project goes from a simple technical exercise to a valuable, insight-driven report that can guide strategic decisions for a Kickstarter creator or for the platform itself.
+
