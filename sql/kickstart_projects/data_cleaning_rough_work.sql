@@ -83,3 +83,24 @@ select name, name from projects1_stage0;
     WHERE usd_goal_real IS NULL;
     
     -- after running the above script and all the columns returned 0, it is confirmed that no null value(s) exist
+    
+    
+    
+    -- Standardize table
+    /*, pledged, state, backers, country, usd_pledged_real,usd_goal_real,*/
+    -- id
+    alter table projects_cleaned modify Column id int primary key unique not null;
+    alter table projects_cleaned modify column name varchar(100) not null;
+    alter table projects_cleaned modify column category varchar(100) not null;
+    alter table projects_cleaned modify column main_category varchar(50) not null;
+    alter table projects_cleaned modify column currency varchar(4) not null;
+    alter table projects_cleaned modify column deadline date not null;
+    alter table projects_cleaned modify column goal float not null;
+    alter table projects_cleaned modify column launched datetime not null;
+    alter table projects_cleaned modify column pledged float(10,2) not null;
+    alter table projects_cleaned modify column state varchar(10) null;
+    alter table projects_cleaned modify column backers int default 0;
+    alter table projects_cleaned modify column country  varchar(4) not null;
+    alter table projects_cleaned modify column `usd pledged` varchar(20) not null;
+    alter table projects_cleaned modify column usd_pledged_real float(10,2) not null;
+    alter table projects_cleaned modify column usd_goal_real real(10,2) not null;

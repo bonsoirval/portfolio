@@ -105,4 +105,20 @@ FROM projects;
 -- 5 create projects_cleaned table after cleaning the table
 CREATE TABLE IF NOT EXISTS projects_cleaned AS SELECT * FROM projects1_stage0;
 
-show tables;
+-- Standardize table
+	/* modify and correct column datatypes to suit content */
+    alter table projects_cleaned modify Column id int primary key unique not null;
+    alter table projects_cleaned modify column name varchar(100) not null;
+    alter table projects_cleaned modify column category varchar(100) not null;
+    alter table projects_cleaned modify column main_category varchar(50) not null;
+    alter table projects_cleaned modify column currency varchar(4) not null;
+    alter table projects_cleaned modify column deadline date not null;
+    alter table projects_cleaned modify column goal float not null;
+    alter table projects_cleaned modify column launched datetime not null;
+    alter table projects_cleaned modify column pledged float(10,2) not null;
+    alter table projects_cleaned modify column state varchar(10) null;
+    alter table projects_cleaned modify column backers int default 0;
+    alter table projects_cleaned modify column country  varchar(4) not null;
+    alter table projects_cleaned modify column `usd pledged` varchar(20) not null;
+    alter table projects_cleaned modify column usd_pledged_real float(10,2) not null;
+    alter table projects_cleaned modify column usd_goal_real real(10,2) not null;
