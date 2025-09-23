@@ -16,7 +16,7 @@ select * from projects1_stage0;
 select name, regexp_replace(name, '["":]', '') from projects1_stage0;
 update projects1_stage0 set name = regexp_replace(name, '["":]', '');
 -- confirm 
-select name from projects1_stage0;
+select name, name from projects1_stage0;
 
 # remove ““ in line 15, () in line 16, _ in line 64
 select name, regexp_replace(name, '[“”()_]', '') from projects1_stage0;
@@ -47,97 +47,39 @@ update projects1_stage0  set name = regexp_replace(name, '\\*', '');
 # confirm query effect
 
 # remove ? in line 148
-select name, regexp_replace(name, '[$¥\\?]', '') from projects1_stage0;
+select name, regexp_replace(name, '\\?', '') from projects1_stage0;
 update projects1_stage0 set name = regexp_replace(name, '\\?','');
 select name, name from projects1_stage0;
 
 # remove $,¥ and © in line 148
-select name, regexp_replace(name, '\\?', '') from projects1_stage0;
-update projects1_stage0 set name = regexp_replace(name, '\\?','');
-select name, name from projects1_stage0;
-########################################################
-here down not implemented yet
-########################################################
-# treat line 155, * in 166, ! in line 175, ¡ in line 191
-select name, regexp_replace(name, '[,\[!\]¡]','') from projects1_stage0;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-select name, trim(name) as worked_on from projects1_stage0;
-update projects1_stage0 set name = trim(leading '"' from name); 
+select name, regexp_replace(name, '[¥$©]', '') from projects1_stage0;
+update projects1_stage0 set name = regexp_replace(name, '[¥$©]','');
 select name, name from projects1_stage0;
 
-update projects1_stage0 set name = trim(leading "'" from name);
+# remove !, ¡ and \  in lines 175, 190, 249 to 280, 299,',' in 310,  §o and ~ in line 321 
+# ¿ in line 369 to 379
+select id, name, trim(regexp_replace(name, '[\\\\!¡/.><!÷¨·,§o~¿]', '')) as cleaned
+from projects1_stage0;
+
+update projects1_stage0 set name = regexp_replace(name, '[\\\\!¡/.><!÷¨·,§o~¿]', '');
 select name, name from projects1_stage0;
 
-update projects1_stage0 set name = trim(leading "_" from name);
-select name from projects1_stage0;
 
-update projects1_stage0 set name = regexp_replace(name, "-", '');
-select name, name as worked_on from projects1_stage0; 
-
-update projects1_stage0 set name = regexp_replace(trim(name), "|", ''); -- 2. removes spaces surrounding |
-select name, name  as worked_on from projects1_stage0;
-
-update projects1_stage0 set name = regexp_replace(name, "-", ''); -- 3. removes all dashes. 
-select name, name  as worked_on from projects1_stage0;
-
-update projects1_stage0 set name = regexp_replace(name, '[?\*]', ''); -- 4. removes '? \"
-select name, name  as worked_on from projects1_stage0;
-
-update projects1_stage0 set name = regexp_replace(name, '—','');
-select name from projects1_stage0;
-
-update projects1_stage0 set name = regexp_replace(name, ',', '');
-select name from projects1_stage0;
-
-update projects1_stage0 set name = regexp_replace(name, '¡', ''); -- 5. removes ':'
-select name, name  as worked_on from projects1_stage0;
-
-update projects1_stage0 set name = regexp_replace(name, '¡', ''); -- 5. removes ':'
-select name, name  as worked_on from projects1_stage0;
-
-update projects1_stage0 set name = trim(regexp_replace(name, '!', ''));
-select name, name from projects1_stage0;
-
-update projects1_stage0 set name = trim(regexp_replace(name, '/', ''));
-select name, name from projects1_stage0;
-
-update projects1_stage0 set name = trim(regexp_replace(name, '[</>|"\'÷().]', ''));
-select name, name from projects1_stage0;
--- $$$$$$$$$$$$$$$$$$$$
-update projects1_stage0 set name = egexp_replace(name, '¡', ''); -- 6. removes "¡"
-select name, name  as worked_on from projects1_stage0;
-
-update projects1_stage0 set name = regexp_replace(name, '¿', '');-- 7. remvoes "¿" 
-select name, name  as worked_on from projects1_stage0;
-
-update projects1_stage0 set name = regexp_replace(name, '¿', '');-- 7. remvoes "¿" 
-select name, trim(leading '.' from name) as worked_on from projects1_stage0;
-select name, regexp_replace(name, '', '') as worked_on from projects1_stage0;
-select name, regexp_replace(name, '¿', '') as worked_on from projects1_stage0;
-select name, name  as worked_on from projects1_stage0;
-
-select name, regexp_replace(name, '¿', '') as worked_on from projects1_stage0;
-select name, name  as worked_on from projects1_stage0;
+-- check columns with null values
+	-- find columns that allow null values
+    select column_name, is_nullable 
+    from information_schema.columns
+    where table_schema = 'kickstart_projects'
+    and table_name = 'projects1_stage0'
+    and is_nullable = 'yes';
+    /* all columns, listed below allow null values. 
+    id, name, category, main_category, currency,deadline, 
+    goal, launched, pledged, state, backers, country, usd_pledged_real,
+    usd_goal_real,
+    */
+    -- count null values in the columns
+    SELECT COUNT(*) 
+    FROM projects1_stage0
+    WHERE usd_goal_real IS NULL;
+    
+    -- after running the above script and all the columns returned 0, it is confirmed that no null value(s) exist
