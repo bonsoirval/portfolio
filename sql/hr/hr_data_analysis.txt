@@ -1,0 +1,198 @@
+Source : https://www.kaggle.com/datasets/rhuebner/human-resources-data-set?resource=download
+
+
+
+Great — your dataset has 311 employees and 36 columns with HR-related details (salary, performance, recruitment source, department, termination, demographics, etc.).
+
+To perform Human Resources SQL analytics to attract employment, here’s what you should do:
+
+🔹 1. Define Your HR Analytics Goals
+
+Since your aim is to attract more employment (talent acquisition), focus on:
+
+Best recruitment sources (where successful employees come from).
+
+Demographics & diversity insights (gender, race, citizenship, state).
+
+Employee retention patterns (who stays vs who leaves).
+
+Performance & satisfaction drivers.
+
+🔹 2. Prepare the Data for SQL
+
+You’ll need to clean and structure the data:
+
+Convert dates (DOB, DateofHire, DateofTermination) into SQL DATE.
+
+Ensure categorical columns (Sex, RaceDesc, RecruitmentSource, Department) are normalized.
+
+Create derived columns, e.g.:
+
+Tenure = DateofTermination - DateofHire
+
+Age = CurrentDate - DOB
+
+🔹 3. SQL Queries for HR Insights
+
+Here are examples of SQL queries you can run:
+
+a) Top Recruitment Sources for Successful Hires
+SELECT RecruitmentSource, COUNT(*) AS Hires, 
+       AVG(EmpSatisfaction) AS AvgSatisfaction, 
+       AVG(Salary) AS AvgSalary
+FROM HRDataset
+WHERE Termd = 0
+GROUP BY RecruitmentSource
+ORDER BY Hires DESC;
+
+b) Employee Retention by Department
+SELECT Department, 
+       COUNT(*) AS TotalEmployees,
+       SUM(CASE WHEN Termd = 1 THEN 1 ELSE 0 END) AS Terminated,
+       ROUND(100.0 * SUM(CASE WHEN Termd = 1 THEN 1 ELSE 0 END) / COUNT(*),2) AS TurnoverRate
+FROM HRDataset
+GROUP BY Department
+ORDER BY TurnoverRate ASC;
+
+c) Demographic Breakdown of Workforce
+SELECT Sex, RaceDesc, COUNT(*) AS Employees
+FROM HRDataset
+WHERE Termd = 0
+GROUP BY Sex, RaceDesc
+ORDER BY Employees DESC;
+
+d) Performance vs Recruitment Source
+SELECT RecruitmentSource, PerformanceScore, COUNT(*) AS Count
+FROM HRDataset
+GROUP BY RecruitmentSource, PerformanceScore
+ORDER BY Count DESC;
+
+e) Absenteeism Patterns
+SELECT Department, AVG(Absences) AS AvgAbsences
+FROM HRDataset
+GROUP BY Department
+ORDER BY AvgAbsences DESC;
+
+🔹 4. Insights You Can Draw
+
+Which recruitment channels yield the best performers and lowest turnover.
+
+Which departments struggle with high attrition or absenteeism.
+
+Employee satisfaction trends across demographics.
+
+Optimal salary ranges that attract and retain talent.
+
+👉 Next step: I can generate ready-to-use SQL scripts for talent attraction dashboards (retention, recruitment source effectiveness, diversity hiring).
+
+Would you like me to design a SQL HR analytics dashboard schema (tables + KPIs) so you can plug queries into a BI tool? 
+
+
+
+
+
+
+
+
+
+
+
+
+#########################
+Perfect 👍
+I’ll give you ready-to-use SQL scripts that you can run to build a Talent Attraction Dashboard. Then, I’ll also outline a dashboard schema with KPIs that you can use in a BI tool like Power BI, Tableau, or even directly in SQL Server Reporting Services.
+
+🔹 1. SQL Scripts for HR Talent Attraction Analytics
+A) Employee Retention (by Department & Overall)
+-- Retention Rate per Department
+SELECT Department,
+       COUNT(*) AS TotalEmployees,
+       SUM(CASE WHEN Termd = 0 THEN 1 ELSE 0 END) AS ActiveEmployees,
+       SUM(CASE WHEN Termd = 1 THEN 1 ELSE 0 END) AS TerminatedEmployees,
+       ROUND(100.0 * SUM(CASE WHEN Termd = 0 THEN 1 ELSE 0 END) / COUNT(*),2) AS RetentionRate
+FROM HRDataset
+GROUP BY Department
+ORDER BY RetentionRate DESC;
+
+B) Recruitment Source Effectiveness
+-- Recruitment Sources ranked by retention & satisfaction
+SELECT RecruitmentSource,
+       COUNT(*) AS TotalHires,
+       SUM(CASE WHEN Termd = 0 THEN 1 ELSE 0 END) AS ActiveEmployees,
+       ROUND(100.0 * SUM(CASE WHEN Termd = 0 THEN 1 ELSE 0 END) / COUNT(*),2) AS RetentionRate,
+       ROUND(AVG(EmpSatisfaction),2) AS AvgSatisfaction,
+       ROUND(AVG(Salary),2) AS AvgSalary
+FROM HRDataset
+GROUP BY RecruitmentSource
+ORDER BY RetentionRate DESC, AvgSatisfaction DESC;
+
+C) Diversity Hiring Insights
+-- Workforce Diversity (Gender x Race)
+SELECT Sex,
+       RaceDesc,
+       COUNT(*) AS EmployeeCount,
+       ROUND(100.0 * COUNT(*) / (SELECT COUNT(*) FROM HRDataset WHERE Termd = 0),2) AS WorkforcePercentage
+FROM HRDataset
+WHERE Termd = 0
+GROUP BY Sex, RaceDesc
+ORDER BY EmployeeCount DESC;
+
+D) High Performers by Recruitment Source
+-- Which recruitment sources bring in high performers
+SELECT RecruitmentSource,
+       PerformanceScore,
+       COUNT(*) AS EmployeeCount
+FROM HRDataset
+WHERE Termd = 0
+GROUP BY RecruitmentSource, PerformanceScore
+ORDER BY EmployeeCount DESC;
+
+E) Absenteeism & Engagement
+-- Absences by Department (to see engagement levels)
+SELECT Department,
+       ROUND(AVG(Absences),2) AS AvgAbsences,
+       ROUND(AVG(EngagementSurvey),2) AS AvgEngagement
+FROM HRDataset
+WHERE Termd = 0
+GROUP BY Department
+ORDER BY AvgAbsences DESC;
+
+🔹 2. Dashboard Schema & KPIs
+
+You can structure the Talent Attraction Dashboard with the following:
+
+Tables:
+
+Employee Table: demographics, position, salary, hire/termination dates.
+
+Recruitment Table: recruitment source, hire outcomes.
+
+Performance Table: performance score, engagement, satisfaction.
+
+Absenteeism Table: days late, absences.
+
+KPIs:
+
+Retention Rate = Active Employees ÷ Total Employees.
+
+Turnover Rate = Terminated ÷ Total Employees.
+
+Top Recruitment Sources = Sources with highest retention + satisfaction.
+
+Diversity Ratio = % Female/Male, % Race distribution.
+
+Employee Engagement Index = Avg(EngagementSurvey + EmpSatisfaction).
+
+Absenteeism Rate = Avg(Absences) per department.
+
+High Performer Source Ratio = % of hires with top performance score.
+
+⚡ With these SQL scripts + KPIs, you can build visuals like:
+
+Retention Funnel (by dept & recruitment source)
+
+Diversity Pie Charts (race & gender)
+
+Engagement Heatmaps (department vs engagement/absences)
+
+Recruitment Source Leaderboard

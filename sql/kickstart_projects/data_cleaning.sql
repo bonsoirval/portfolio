@@ -23,73 +23,112 @@ FROM projects;
 		FROM projects0
 	)
 	# select needed columns from the common table expression - cte
-	SELECT id, name, category, main_category, currency, deadline, goal, launched, pledged, state, backers,
-	country, 'usd pledged', usd_pledged_real, usd_goal_real
-	FROM duplicate_cte
-	WHERE row_num = 1; # select non duplicated values
+	SELECT 
+		id,
+		name,
+		category,
+		main_category,
+		currency,
+		deadline,
+		goal,
+		launched,
+		pledged,
+		state,
+		backers,
+		country,
+		'usd pledged',
+		usd_pledged_real,
+		usd_goal_real
+	FROM
+		duplicate_cte
+	WHERE
+		row_num = 1; # select non duplicated values
 
 -- 2. Standardize data
 	-- stage projects1 as projects1_stage0
     -- create a stage table projects1_stage0
-		drop table projects1_stage0;
-		create table if not exists projects1_stage0 as select * from projects1;
+		DROP TABLE IF EXISTS projects1_stage0;
+		CREATE TABLE IF NOT EXISTS projects1_stage0 
+        AS 
+        SELECT * 
+        FROM projects1;
 
 		# confirm new table creation
-		select * from projects1_stage0;
+		SELECT 
+			*
+		FROM
+			projects1_stage0;
 
 		-- remove leading spaces and trailing  ' " ' and effect this seen in first and second rows
 		UPDATE projects1_stage0
-		set name = trim(leading from (trim(trailing '"' from name)));
+		SET name = TRIM(LEADING FROM (TRIM(TRAILING '"' FROM name)));
 
 		# remove '""' in text
-		update projects1_stage0 set name = regexp_replace(name, '["":]', '');
+		UPDATE projects1_stage0 SET name = REGEXP_REPLACE(name, '["":]', '');
 
 		# remove ““ in line 15, () in line 16, _ in line 64
-		update projects1_stage0 set name = regexp_replace(name, '[“”()_]', '');
+		UPDATE projects1_stage0 SET name = REGEXP_REPLACE(name, '[“”()_]', '');
 
 		# hand leading emerged leading " ' " in line 5 and " -| " in line 74, "\" in line 118
-		update projects1_stage0 set name = regexp_replace(name,'[-|\']', '');
+		UPDATE projects1_stage0 SET name = REGEXP_REPLACE(name,'[-|\']', '');
 
 		# treat line 153
-		update projects1_stage0 set name = regexp_replace(name, '–', '');
+		UPDATE projects1_stage0 SET name = REGEXP_REPLACE(name, '–', '');
 
 		# treat 154
-		update projects1_stage0
-		set name = regexp_replace(name,'—', '');
+		UPDATE projects1_stage0
+		SET name = REGEXP_REPLACE(name,'—', '');
 
 		# removing leading * in line 114
-		update projects1_stage0  set name = regexp_replace(name, '\\*', '');
+		UPDATE projects1_stage0 SET name = REGEXP_REPLACE(name, '\\*', '');
 		# confirm query effect
 
 		# remove ? in line 148
-		update projects1_stage0 set name = regexp_replace(name, '\\?','');
+		UPDATE projects1_stage0 SET name = REGEXP_REPLACE(name, '\\?','');
 
 		# remove $,¥ and © in line 148
-		update projects1_stage0 set name = regexp_replace(name, '[¥$©]','');
+		UPDATE projects1_stage0 SET name = REGEXP_REPLACE(name, '[¥$©]','');
 
 		# remove !, ¡ and \  in lines 175, 190, 249 to 280, 299,',' in 310,  §o and ~ in line 321 
 		# ¿ in line 369 to 379
-		update projects1_stage0 set name = regexp_replace(name, '[\\\\!¡/.><!÷¨·,§o~¿]', '');
-		select name, name from projects1_stage0;
+		UPDATE projects1_stage0 SET name = REGEXP_REPLACE(name, '[\\\\!¡/.><!÷¨·,§o~¿]', '');
+		SELECT name, name FROM projects1_stage0;
 
 -- 3 checking null values
-	select * 
-	from projects1_stage0
-	where name is null or category is null or main_category is null or currency is null or deadline is null
-	or goal is null or launched is null or state is null or backers is null or country is null or 'usd pledged' is null
-	or usd_pledged_real is null or usd_goal_real is null;
+	SELECT 
+		*
+	FROM
+		projects1_stage0
+	WHERE
+		name IS NULL OR category IS NULL
+			OR main_category IS NULL
+			OR currency IS NULL
+			OR deadline IS NULL
+			OR goal IS NULL
+			OR launched IS NULL
+			OR state IS NULL
+			OR backers IS NULL
+			OR country IS NULL
+			OR 'usd pledged' IS NULL
+			OR usd_pledged_real IS NULL
+			OR usd_goal_real IS NULL;
 
 	/* above shows only one null value. Will delete this entry*/
-	delete from projects1_stage0 where name is null;
+	DELETE FROM projects1_stage0 
+	WHERE
+		name IS NULL;
 
 -- 4 check and drop columns with null values
 	-- check columns with null values
 	-- find columns that allow null values
-    select column_name, is_nullable 
-    from information_schema.columns
-    where table_schema = 'kickstart_projects'
-    and table_name = 'projects1_stage0'
-    and is_nullable = 'yes';
+	SELECT 
+		COLUMN_NAME, is_nullable
+	FROM
+		information_schema.columns
+	WHERE
+		table_schema = 'kickstart_projects'
+			AND table_name = 'projects1_stage0'
+			AND is_nullable = 'yes';
     /* all columns, listed below allow null values. 
     id, name, category, main_category, currency,deadline, 
     goal, launched, pledged, state, backers, country, usd_pledged_real,
@@ -107,18 +146,22 @@ CREATE TABLE IF NOT EXISTS projects_cleaned AS SELECT * FROM projects1_stage0;
 
 -- Standardize table
 	/* modify and correct column datatypes to suit content */
-    alter table projects_cleaned modify Column id int primary key unique not null;
-    alter table projects_cleaned modify column name varchar(100) not null;
-    alter table projects_cleaned modify column category varchar(100) not null;
-    alter table projects_cleaned modify column main_category varchar(50) not null;
-    alter table projects_cleaned modify column currency varchar(4) not null;
-    alter table projects_cleaned modify column deadline date not null;
-    alter table projects_cleaned modify column goal float not null;
-    alter table projects_cleaned modify column launched datetime not null;
-    alter table projects_cleaned modify column pledged float(10,2) not null;
-    alter table projects_cleaned modify column state varchar(10) null;
-    alter table projects_cleaned modify column backers int default 0;
-    alter table projects_cleaned modify column country  varchar(4) not null;
-    alter table projects_cleaned modify column `usd pledged` varchar(20) not null;
-    alter table projects_cleaned modify column usd_pledged_real float(10,2) not null;
-    alter table projects_cleaned modify column usd_goal_real real(10,2) not null;
+    ALTER TABLE projects_cleaned MODIFY COLUMN id INT PRIMARY KEY UNIQUE NOT NULL;
+    ALTER TABLE projects_cleaned MODIFY COLUMN name VARCHAR(100) NOT NULL;
+    ALTER TABLE projects_cleaned MODIFY COLUMN category VARCHAR(100) NOT NULL;
+    ALTER TABLE projects_cleaned MODIFY COLUMN main_category VARCHAR(50) NOT NULL;
+    ALTER TABLE projects_cleaned MODIFY COLUMN currency VARCHAR(4) NOT NULL;
+    ALTER TABLE projects_cleaned MODIFY COLUMN deadline DATE NOT NULL;
+    ALTER TABLE projects_cleaned MODIFY COLUMN goal FLOAT NOT NULL;
+    ALTER TABLE projects_cleaned MODIFY COLUMN launched DATETIME NOT NULL;
+    ALTER TABLE projects_cleaned MODIFY COLUMN pledged FLOAT(10,2) NOT NULL;
+    ALTER TABLE projects_cleaned MODIFY COLUMN state VARCHAR(10) NULL;
+    ALTER TABLE projects_cleaned MODIFY COLUMN backers INT DEFAULT 0;
+    ALTER TABLE projects_cleaned MODIFY COLUMN country  VARCHAR(4) NOT NULL;
+    ALTER TABLE projects_cleaned MODIFY COLUMN `usd pledged` VARCHAR(20) NOT NULL;
+    ALTER TABLE projects_cleaned MODIFY COLUMN usd_pledged_real FLOAT(10,2) NOT NULL;
+    ALTER TABLE projects_cleaned MODIFY COLUMN usd_goal_real REAL(10,2) NOT NULL;
+<<<<<<< Updated upstream
+    
+=======
+>>>>>>> Stashed changes
