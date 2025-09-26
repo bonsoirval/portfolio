@@ -1,7 +1,6 @@
 # *Njoku Okechukwu Val - Portfolio*
 This repository contains my data analytics portfolio projects. They are divided into sections for the respectives group of projects.
 
-<<<<<<< HEAD
 
 1. SQL
 
@@ -25,6 +24,3 @@ where the project idea was picked.
 For consultancy, projects and other enquiries
 - email : bonsoirval@gmail.com
 - phone : +2347038616871 
-=======
-1. SQL - SQL(MySQL) portfolio projects. Currently data cleaning ongoing.
->>>>>>> master
