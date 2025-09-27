@@ -160,4 +160,10 @@ CREATE TABLE IF NOT EXISTS projects_cleaned AS SELECT * FROM projects1_stage0;
     ALTER TABLE projects_cleaned MODIFY COLUMN country  VARCHAR(4) NOT NULL;
     ALTER TABLE projects_cleaned MODIFY COLUMN `usd pledged` VARCHAR(20) NOT NULL;
     ALTER TABLE projects_cleaned MODIFY COLUMN usd_pledged_real FLOAT(10,2) NOT NULL;
+<<<<<<< Updated upstream
     ALTER TABLE projects_cleaned MODIFY COLUMN usd_goal_real REAL(10,2) NOT NULL;
+=======
+    ALTER TABLE projects_cleaned MODIFY COLUMN usd_goal_real REAL(10,2) NOT NULL;
+    ALTER TABLE projects_cleaned MODIFY COLUMN usd_goal_real REAL(10,2) NOT NULL;
+
+>>>>>>> Stashed changes
