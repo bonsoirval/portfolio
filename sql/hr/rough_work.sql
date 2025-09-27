@@ -143,3 +143,71 @@ set
     
     update hr_stage0
     set age = TIMESTAMPDIFF(year, dob, curdate());
+-- employee_name
+-- position, sex,
+
+-- dates : dob, date_of_hire, last_performance_review_date
+
+
+
+
+alter table hr_stage0
+modify column last_performance_review_date DATE;
+
+alter table hr_stage0
+modify column date_of_termination DATE;
+
+
+desc hr_stage0;
+
+
+
+
+SELECT STR_TO_DATE(last_performance_review_date, '%m/%d/%y') from hr_stage0;
+SELECT STR_TO_DATE(date_of_termination, '%m/%d/%y') from hr_stage0;
+select * from hr_stage0;
+desc hr_stage0;
+/*, , , , , , ,
+, , term_reason, emplooyment_status, department, manager_name,
+, performance_score, last_performance_review_date
+*/
+-- trim values
+employee_name, 
+emp_id, 
+married_id, 
+marital_status_id, 
+gender_id, 
+emp_status_id, 
+dept_id, 
+perf_score_id, 
+from_diversity_job_fair_id, 
+salary, 
+term_d, 
+position_id, 
+position, 
+state, 
+zip, 
+dob, 
+sex, 
+marital_desc, 
+citizen_desc, 
+hispanic_latino, 
+race_desc, 
+date_of_hire, 
+date_of_termination, 
+term_reason, 
+employment_status, 
+department, 
+manager_name, 
+manager_id, 
+recruitment_source, 
+performance_score, 
+engagement_survey, 
+emp_satisfaaction, 
+special_projects_count, 
+last_performance_review_date, 
+days_late_last_30, 
+absences
+
+desc hr_stage0;
+select * from hr;
