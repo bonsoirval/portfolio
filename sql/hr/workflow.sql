@@ -23,8 +23,7 @@
 	-- a. Check if duplicate values exist
     -- no duplicates found : count of empid existing equals count of distinct empid
 	SELECT COUNT(empid) - COUNT(DISTINCT empid) AS num_duplicates FROM hr_stage0;
-    SELECT COUNT(empid) FROM hr_stage0;
-	SELECT COUNT(DISTINCT empid) FROM hr_stage0;
+
     
 -- 2. Standardize data
 	desc hr_stage0; -- shows column names and datatypes are of good standard
@@ -72,7 +71,6 @@
 -- select null values
 -- empty resultset returned. no null values;
 	select count(*) AS num_nulls
-	select *
 	from hr_stage0
 	where  
 	employee_name is null
@@ -184,32 +182,9 @@
 	update hr_stage0
     set age = TIMESTAMPDIFF(year, dob, curdate());
     
+    
 -- 3. SQL Queries for HR Insights
 
-	
-    -- format date field like date
-    
-    update hr_stage0
-    set 
-		dob = STR_TO_DATE(dob, '%m/%d/%y'),
-		date_of_hire = str_to_date(date_of_hire, '%c/%e/%Y');
-
-    -- convert date field(s) to date datatype
-    alter table hr_stage0
-	modify column dob DATE;
-
-	alter table hr_stage0
-	modify column date_of_hire DATE;
-
--- work in progress    
-    
--- Convert dates (DOB, DateofHire, DateofTermination) into SQL DATE.
---  Ensuring categorical columns (Sex, RaceDesc, RecruitmentSource, Department) are normalized.
--- Create derived columns, e.g.:
--- Tenure = DateofTermination - DateofHire
--- Age = CurrentDate - DOB
-
--- 3. SQL Queries for HR Insights
 /* 4. Insights You Can Draw */
 -- Which recruitment channels yield the best performers and lowest turnover.
 -- Which departments struggle with high attrition or absenteeism.
