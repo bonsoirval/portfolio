@@ -16,13 +16,14 @@
 
 -- 
 -- 0. Copy table - avoiding working with original dataset
+	DROP TABLE IF EXISTS hr_stage0;
 	CREATE TABLE IF NOT EXISTS hr_stage0 AS SELECT * FROM hr;
     
 -- 1. Remove duplicates
 	-- a. Check if duplicate values exist
     -- no duplicates found : count of empid existing equals count of distinct empid
-    SELECT COUNT(empid) FROM hr_stage0;
-	SELECT COUNT(DISTINCT empid) FROM hr_stage0;
+	SELECT COUNT(empid) - COUNT(DISTINCT empid) AS num_duplicates FROM hr_stage0;
+
     
 -- 2. Standardize data
 	desc hr_stage0; -- shows column names and datatypes are of good standard
@@ -69,7 +70,7 @@
 
 -- select null values
 -- empty resultset returned. no null values;
-	select *
+	select count(*) AS num_nulls
 	from hr_stage0
 	where  
 	employee_name is null
@@ -109,15 +110,80 @@
 	or days_late_last_30 is null
 	or absences is null;
 
--- work in progress    
-    
--- Convert dates (DOB, DateofHire, DateofTermination) into SQL DATE.
---  Ensuring categorical columns (Sex, RaceDesc, RecruitmentSource, Department) are normalized.
+	-- update and format dob values to date format
+	-- dob
+    update hr_stage0
+	set dob =  regexp_replace(str_to_date(dob,'%m/%e/%Y'), '2051', '1951');
+    -- date_of_hire
+	update hr_stage0
+	set date_of_hire =  regexp_replace(str_to_date(date_of_hire,'%m/%e/%Y'), '2051', '1951');
+	-- date_of_termination
+	update hr_stage0
+	set date_of_termination =  regexp_replace(str_to_date(date_of_termination,'%m/%e/%Y'), '2051', '1951');
+	-- last_performance_review_date
+	update hr_stage0
+	set last_performance_review_date =  regexp_replace(str_to_date(last_performance_review_date,'%m/%e/%Y'), '2051', '1951');
+	
+    -- Convert dates (DOB, DateofHire, DateofTermination) into SQL DATE.
+    -- dob
+	ALTER TABLE hr_stage0
+	MODIFY COLUMN dob DATE;
+	-- date_of_hire
+	ALTER TABLE hr_stage0
+	MODIFY COLUMN date_of_hire DATE;
+    -- date_of_termination
+    ALTER TABLE hr_stage0
+	MODIFY COLUMN date_of_termination DATE;
+    -- last_performance_review_date
+    ALTER TABLE hr_stage0
+	MODIFY COLUMN last_performance_review_date DATE;
+	
+    -- confirm date column types update
+    desc hr_stage0;
+
+	--  Ensuring categorical columns (Sex, RaceDesc, RecruitmentSource, Department) are normalized.
+    -- trim string columns
+	update hr_stage0
+	set 
+		employee_name = (employee_name), 
+		position = trim(position), 
+		state = trim(state), 
+		sex = trim(sex), 
+		marital_desc = trim(marital_desc), 
+		citizen_desc =  trim(citizen_desc),  
+		hispanic_latino = trim(hispanic_latino), 
+		race_desc = trim(race_desc), 
+		term_reason = trim(term_reason), 
+		employment_status = trim(employment_status),
+		department = trim(department), 
+		manager_name = trim(manager_name),
+		recruitment_source = trim(recruitment_source), 
+		performance_score = trim(performance_score);
+
+
 -- Create derived columns, e.g.:
 -- Tenure = DateofTermination - DateofHire
 -- Age = CurrentDate - DOB
-
+	    -- Feature engineering. 
+    -- adding calculated columns 
+    -- tenure_in_month and tenure_in_year
+	ALTER TABLE hr_stage0
+    ADD COLUMN tenure_in_month int AFTER date_of_hire;
+    ALTER TABLE hr_stage0
+    ADD COLUMN tenure_in_year int AFTER date_of_hire;
+    alter table hr_stage0
+	add column age int after dob;
+    
+    -- populate tenure column
+    update hr_stage0
+    set tenure_in_month = TIMESTAMPDIFF(MONTH, date_of_hire, date_of_termination);
+    update hr_stage0
+    set tenure_in_year = TIMESTAMPDIFF(YEAR, date_of_hire, date_of_termination);
+	update hr_stage0
+    set age = TIMESTAMPDIFF(year, dob, curdate());
+    
 -- 3. SQL Queries for HR Insights
+
 /* 4. Insights You Can Draw */
 -- Which recruitment channels yield the best performers and lowest turnover.
 -- Which departments struggle with high attrition or absenteeism.
