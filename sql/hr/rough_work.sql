@@ -143,3 +143,121 @@ set
     
     update hr_stage0
     set age = TIMESTAMPDIFF(year, dob, curdate());
+    
+-- Exploratory Data Analysis
+    
+    -- A) Employee Retention (by Department & Overall)
+-- Retention Rate per Department
+SELECT department,
+       COUNT(*) AS total_employee,
+       SUM(CASE WHEN term_d = 0 THEN 1 ELSE 0 END) AS active_employees,
+       SUM(CASE WHEN term_d = 1 THEN 1 ELSE 0 END) AS terminated_employees,
+       ROUND(100.0 * SUM(CASE WHEN term_d = 0 THEN 1 ELSE 0 END) / COUNT(*),2) AS retention_rate
+FROM hr_stage0
+GROUP BY department
+ORDER BY retention_rate DESC;
+
+
+-- A) Employee Retention (by Department & Overall)
+-- Retention Rate per Department
+SELECT department,
+       COUNT(*) AS TotalEmployees,
+       SUM(CASE WHEN Termd = 0 THEN 1 ELSE 0 END) AS ActiveEmployees,
+       SUM(CASE WHEN Termd = 1 THEN 1 ELSE 0 END) AS TerminatedEmployees,
+       ROUND(100.0 * SUM(CASE WHEN Termd = 0 THEN 1 ELSE 0 END) / COUNT(*),2) AS RetentionRate
+FROM HRDataset
+GROUP BY Department
+ORDER BY RetentionRate DESC;
+
+
+select department,
+	COUNT(*) AS total_employees,
+    sum(
+    case
+		-- create active_employees columns on the fly
+        -- those not term_d ie 0, are active_employees, hence 1,
+        -- every other is terminated hence, 0 for active_employees
+		when term_d = 0 then 1 
+        else 0
+	end) as active_employees,
+    sum( 
+    case 
+		-- if term_d (terminated) has 1, then terminated, 
+        -- anythihng else is not terminated, ie active
+		when term_d = 1 then 1 
+        else 0
+	end) as terminated_employees,
+    round(100 * sum(case when term_d = 0 then 1 else 0	end) / COUNT(*),2) as retention_rate
+from hr_stage0
+group by department
+order by retention_rate desc;
+
+
+-- B) Recruitment Source Effectiveness
+-- Recruitment Sources ranked by retention & satisfaction
+select 
+	recruitment_source,
+    count(*) as total_hires,
+    sum(case when term_d = 0 then 1 else 0 end) as active_employees,
+    round(100 * sum(case when term_d = 0 then 1 else 0 end) / count(*),2) as retention_rate,
+    round(avg(emp_satisfaction),2) as avg_satisfaction,
+    round(avg(salary),2) as avg_salary
+from 
+	hr_stage0
+GROUP BY recruitment_source
+order by retention_rate desc, avg_satisfaction desc;
+
+
+-- B) Checking which recruitment source is more / most effective
+--  Recruitment Source Effectiveness
+-- Recruitment Sources ranked by retention & satisfaction
+select 
+	recruitment_source,
+    count(*) as total_hires,
+    sum(case when term_d = 0 then 1 else 0 end) as active_employees,
+    round(100 * sum(case when term_d = 0 then 1 else 0 end) / count(*),2) as retention_rate,
+    round(avg(emp_satisfaction),2) as avg_satisfaction,
+    round(avg(salary),2) as avg_salary
+from 
+	hr_stage0
+GROUP BY recruitment_source
+order by retention_rate desc, avg_satisfaction desc;
+
+	-- C) Diversity Hiring Insights
+-- Workforce Diversity (Gender x Race)
+	SELECT sex,
+		   race_desc,
+		   COUNT(*) AS employee_count,
+		   ROUND(100.0 * COUNT(*) / (SELECT COUNT(*) FROM hr_stage0 WHERE term_d = 0),2) AS workforce_percentage
+	FROM hr_stage0
+	WHERE term_d = 0
+	GROUP BY sex, race_desc
+	ORDER BY employee_count DESC;
+
+-- D) High Performers by Recruitment Source
+-- Which recruitment sources bring in high performers
+	SELECT recruitment_source,
+		   performance_score,
+		   COUNT(*) AS employee_count
+	FROM hr_stage0
+	WHERE term_d = 0
+	GROUP BY Recruitment_Source, Performance_Score
+	ORDER BY employee_count DESC;
+
+
+
+-- E) Absenteeism & Engagement
+-- Absences by Department (to see engagement levels)
+/* from the result, sales officers are most absent, this could be taken given they could have to go and meet clients without reporting 
+to the office. This is followed by IT/IS who could work remotely too, executive officers, could attend off office meeting with other 
+stake holders followed by admin officers and least software engineering. 
+
+Expectation is that admin officers would be least absent because they would report daily to the office to check and keep things in order
+while software engineers  can also work remotely.*/
+SELECT department,
+       ROUND(AVG(absences),2) AS avg_absences,
+       ROUND(AVG(engagement_survey),2) AS avg_engagement
+FROM hr_stage0
+WHERE term_d = 0
+GROUP BY department
+ORDER BY avg_absences DESC;
