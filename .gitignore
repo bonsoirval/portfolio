@@ -1,3 +1,12 @@
+resources/
 datasets/
 financial/
+financial/archive (1).zip
+financial/datasets/financial_risk_assessment.csv
+financial/src.ipynb
+datasets/machine_downtime/downtime-factors.csv 
+datasets/machine_downtime/line-downtime.csv 
+datasets/machine_downtime/line-productivity.csv 
+datasets/machine_downtime/metadata.csv 
+datasets/machine_downtime/products.csv
 machine_downtime.ipynb

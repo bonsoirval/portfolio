@@ -1,0 +1,45 @@
+Step 1: Inspect the dataset
+
+I’ll take a quick look at the structure of /mnt/data/4_house_prediction_dataset.csv (columns, sample rows, datatypes).
+
+It looks like the dataset was read incorrectly — everything is jammed into a single column.
+This usually happens when the file is space-separated instead of comma-separated.
+
+Step 2: Reload with correct delimiter
+
+We’ll try using whitespace separation. 
+
+Perfect ✅ — now the dataset is properly structured:
+
+505 rows × 14 columns
+
+This looks like the Boston Housing dataset, commonly used for price prediction.
+
+Step 3: Business Data Analyst Problem Definitions
+
+As a business data analyst, the goal is not just prediction, but to derive insights for decision-making.
+Here are some problem definitions we can solve with this dataset:
+
+Problem 1: What factors drive house prices?
+
+Business View: Understand which features (crime rate, number of rooms, accessibility, etc.) influence home values.
+
+Solution: Correlation analysis + feature importance.
+
+Problem 2: Which neighborhoods have undervalued or overvalued homes?
+
+Business View: Identify areas where houses may be cheaper than expected, useful for investors.
+
+Solution: Grouping by neighborhood variables and comparing price distributions.
+
+Problem 3: Predict house prices for new properties.
+
+Business View: Help real estate companies or buyers estimate fair prices.
+
+Solution: Build a regression model (Linear Regression, Random Forest).
+
+Problem 4: How does pollution, crime, or access to transport affect house values?
+
+Business View: Guide city planning and policy-making.
+
+Solution: Regression and visualization of relationships.
