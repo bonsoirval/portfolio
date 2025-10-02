@@ -23,7 +23,7 @@ where the project idea was picked.
 
 For consultancy, projects and other enquiries
 - email : bonsoirval@gmail.com
-- phone : +2347038616871 
+- phone : [Start Chart on +2347038616871](https://wa.link/bblwk8) 
 
 1. SQL - SQL(MySQL) portfolio projects. Currently data cleaning ongoing.
 
