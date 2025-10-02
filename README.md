@@ -1,11 +1,10 @@
 # *Njoku Okechukwu Val - Portfolio*
 This repository contains my data analytics portfolio projects. They are divided into sections for the respectives group of projects.
 
-<<<<<<< HEAD
-
-1. SQL
-
-1. SQL - SQL(MySQL) portfolio projects. Currently data cleaning ongoing.
+1. [SQL](https://github.com/bonsoirval/portfolio/tree/master/sql)   - SQL(MySQL) portfolio projects. Done
+2. Excel - (Coming soon)
+3. Power BI - (Coming soon)
+4. [Python](https://github.com/bonsoirval/portfolio/tree/master/python/) - (Ongoing)
 ## *Projects Process*
 - Data Cleaning
 With mysql server (from mariadb 11.8.3) and mysql workbench (version 8.0.36) installed on Debian 13 (Trixie) the dataset was accessed 
@@ -25,6 +24,6 @@ where the project idea was picked.
 For consultancy, projects and other enquiries
 - email : bonsoirval@gmail.com
 - phone : +2347038616871 
-=======
+
 1. SQL - SQL(MySQL) portfolio projects. Currently data cleaning ongoing.
->>>>>>> master
+
