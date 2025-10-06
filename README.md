@@ -5,6 +5,7 @@ This repository contains my data analytics portfolio projects. They are divided 
 2. Excel - (Coming soon)
 3. Power BI - (Coming soon)
 4. [Python](https://github.com/bonsoirval/portfolio/tree/master/python/) - (Ongoing)
+5. [Resume](https://github.com/bonsoirval/portfolio/blob/master/resume.pdf) - Make sure to check this out as it contains some additional information.
 ## *Projects Process*
 - Data Cleaning
 With mysql server (from mariadb 11.8.3) and mysql workbench (version 8.0.36) installed on Debian 13 (Trixie) the dataset was accessed 
