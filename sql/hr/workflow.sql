@@ -44,10 +44,10 @@
 	RENAME COLUMN Termd to term_d, 
 	RENAME COLUMN PositionID to position_id, 
 	RENAME COLUMN Position to position, 
-	RENAME COLUMN State to state, 
+	2RENAME COLUMN State to state, 
 	RENAME COLUMN Zip to zip, 
 	RENAME COLUMN DOB to dob, 
-	RENAME COLUMN Sex to sex, 
+	RENAME COLUMN Sex to sex,
 	RENAME COLUMN MaritalDesc to marital_desc, 
 	RENAME COLUMN CitizenDesc to citizen_desc, 
 	RENAME COLUMN HispanicLatino to hispanic_latino, 
@@ -112,9 +112,15 @@
 
 	-- update and format dob values to date format
 	-- dob
-    update hr_stage0
-	set dob =  regexp_replace(str_to_date(dob,'%m/%e/%Y'), '2051', '1951');
-    -- date_of_hire
+    UPDATE hr_stage0
+	SET dob = 
+    CASE
+        WHEN substr(str_to_date(dob, '%m/%e/%y'),1,2) = 20 THEN 
+            DATE(CONCAT(REPLACE(YEAR(STR_TO_DATE(dob,'%m/%e/%y')), 20,19), '-',
+            MONTH(STR_TO_DATE(dob,'%m/%e/%y')),'-',
+            DAY(STR_TO_DATE(dob, '%m/%e/%y'))))
+        ELSE str_to_date(dob, '%m/%e/%y')
+    END    -- date_of_hire
 	update hr_stage0
 	set date_of_hire =  regexp_replace(str_to_date(date_of_hire,'%m/%e/%Y'), '2051', '1951');
 	-- date_of_termination
