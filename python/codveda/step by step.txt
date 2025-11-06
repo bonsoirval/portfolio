@@ -1,44 +1,29 @@
 Got it 👍 You’ve uploaded a Sentiment dataset now. Since you asked for working code to solve business problems using Python data analytics with comments, let’s structure it as a Business Data Analyst Walkthrough.
-
 We’ll do the following:
-
 Load & inspect dataset
-
 Define business problems (related to customer sentiment)
-
 Provide Python solutions with comments
 
 Step 1: Inspect dataset first
-
 I’ll check the structure of your /mnt/data/3) Sentiment dataset.csv so we can understand what’s inside.
-
 Great ✅ The dataset is now clear:
-
 732 rows × 15 columns
 
 Key fields:
-
 Text → post content
-
 Sentiment → Positive / Negative / Neutral
-
 Platform, Country, Hashtags
-
 Engagement metrics: Retweets, Likes
-
 Time features: Year, Month, Day, Hour
-
 📊 Business Problems & Python Solutions (with comments)
-Problem 1: Which platforms drive the most positive engagement?
 
+Problem 1: Which platforms drive the most positive engagement?
 Business View: Marketing team wants to know where to focus (Twitter, Instagram, Facebook, etc.).
 
 import matplotlib.pyplot as plt
 import seaborn as sns
-
 # Group by platform and sentiment
 platform_sentiment = df_sentiment.groupby(["Platform","Sentiment"]).size().unstack()
-
 # Plot sentiment distribution per platform
 platform_sentiment.plot(kind="bar", figsize=(8,5))
 plt.title("Sentiment Distribution per Platform")
@@ -48,8 +33,8 @@ plt.show()
 
 ✅ Helps managers decide which platform performs best for positive brand engagement.
 
-Problem 2: Which countries show the highest positive vs negative sentiment?
 
+Problem 2: Which countries show the highest positive vs negative sentiment?
 Business View: Useful for targeting advertising campaigns by geography.
 
 # Count sentiment per country

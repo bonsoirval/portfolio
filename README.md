@@ -2,6 +2,7 @@
 This repository contains my data analytics portfolio projects. They are divided into sections for the respectives group of projects.
 
 1. [SQL](https://github.com/bonsoirval/portfolio/tree/master/sql)   - SQL(MySQL) portfolio projects. Done
+    - [HR](https://github.com/bonsoirval/portfolio/tree/master/sql/hr) - Human resource sql project
 2. Excel - (Coming soon)
 3. Power BI - (Coming soon)
 4. [Python](https://github.com/bonsoirval/portfolio/tree/master/python/) - (Ongoing)
@@ -9,7 +10,7 @@ This repository contains my data analytics portfolio projects. They are divided 
 ## *Projects Process*
 - Data Cleaning
 With mysql server (from mariadb 11.8.3) and mysql workbench (version 8.0.36) installed on Debian 13 (Trixie) the dataset was accessed 
-from [kaggle](https://anvilproject.org/guides/content/creating-links).
+from [kaggle](https://www.kaggle.com/datasets/rhuebner/human-resources-data-set).
 The dataset was imported directly into mysql using mysql workbench and it automatically created a table, picking datatype from the content
 of the columns. The mysql directory contains the following files
 - instructions.txt : this contains the instruction / requirements needed to successfully complete the project, stated [here](https://www.dataquest.io/blog/sql-projects/), 
