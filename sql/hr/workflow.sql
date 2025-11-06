@@ -121,6 +121,7 @@
             DAY(STR_TO_DATE(dob, '%m/%e/%y'))))
         ELSE str_to_date(dob, '%m/%e/%y')
     END    -- date_of_hire
+    
 	update hr_stage0
 	set date_of_hire =  regexp_replace(str_to_date(date_of_hire,'%m/%e/%Y'), '2051', '1951');
 	-- date_of_termination
