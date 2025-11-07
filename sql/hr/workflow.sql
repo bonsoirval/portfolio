@@ -11,7 +11,7 @@
 	-- 0. Copy table 
     -- 1. Remove duplicates
 	-- 2. Standardize data
-	-- 3. Remove null values
+	-- 3. Handle (Remove or fill) null values
     -- 4. Drop columns or rows
 
 -- 
@@ -24,14 +24,13 @@
     -- no duplicates found : count of empid existing equals count of distinct empid
 	SELECT COUNT(empid) - COUNT(DISTINCT empid) AS num_duplicates FROM hr_stage0;
 
-    
 -- 2. Standardize data
 	desc hr_stage0; -- shows column names and datatypes are of good standard
     -- notice: Upper camel casing was used
     -- Employee_Name and LastPerformanceReview_Date do not conform to the upper camel casing naming. 
     -- Converting all to all lower and words separated by underscore
     ALTER TABLE hr_stage0
-	RENAME COLUMN ﻿Employee_Name TO employee_name,
+	RENAME COLUMN `﻿Employee_Name` TO employee_name,
 	RENAME COLUMN EmpID TO  emp_id,
 	RENAME COLUMN MarriedID TO married_id,
 	RENAME COLUMN MaritalStatusID TO marital_status_id,
@@ -44,7 +43,7 @@
 	RENAME COLUMN Termd to term_d, 
 	RENAME COLUMN PositionID to position_id, 
 	RENAME COLUMN Position to position, 
-	2RENAME COLUMN State to state, 
+	RENAME COLUMN State to state, 
 	RENAME COLUMN Zip to zip, 
 	RENAME COLUMN DOB to dob, 
 	RENAME COLUMN Sex to sex,
@@ -70,6 +69,7 @@
 
 -- select null values
 -- empty resultset returned. no null values;
+
 	select count(*) AS num_nulls
 	from hr_stage0
 	where  
@@ -120,39 +120,35 @@
             MONTH(STR_TO_DATE(dob,'%m/%e/%y')),'-',
             DAY(STR_TO_DATE(dob, '%m/%e/%y'))))
         ELSE str_to_date(dob, '%m/%e/%y')
-    END    -- date_of_hire
+    END;    -- date_of_hire
     
-	update hr_stage0
-	set date_of_hire =  regexp_replace(str_to_date(date_of_hire,'%m/%e/%Y'), '2051', '1951');
+
+		update hr_stage0
+	set date_of_hire =  str_to_date(date_of_hire,'%m/%e/%Y');
 	-- date_of_termination
 	update hr_stage0
-	set date_of_termination =  regexp_replace(str_to_date(date_of_termination,'%m/%e/%Y'), '2051', '1951');
+	set date_of_termination =  str_to_date(date_of_termination,'%m/%e/%Y');
 	-- last_performance_review_date
 	update hr_stage0
-	set last_performance_review_date =  regexp_replace(str_to_date(last_performance_review_date,'%m/%e/%Y'), '2051', '1951');
+	set last_performance_review_date =  str_to_date(last_performance_review_date,'%m/%e/%Y');
 	
     -- Convert dates (DOB, DateofHire, DateofTermination) into SQL DATE.
     -- dob
 	ALTER TABLE hr_stage0
-	MODIFY COLUMN dob DATE;
-	-- date_of_hire
-	ALTER TABLE hr_stage0
-	MODIFY COLUMN date_of_hire DATE;
-    -- date_of_termination
-    ALTER TABLE hr_stage0
-	MODIFY COLUMN date_of_termination DATE;
-    -- last_performance_review_date
-    ALTER TABLE hr_stage0
+	MODIFY COLUMN dob DATE,
+	MODIFY COLUMN date_of_hire DATE,
+	MODIFY COLUMN date_of_termination DATE,
 	MODIFY COLUMN last_performance_review_date DATE;
-	
+	-- date_of_hire
+ 	
     -- confirm date column types update
     desc hr_stage0;
 
-	--  Ensuring categorical columns (Sex, RaceDesc, RecruitmentSource, Department) are normalized.
-    -- trim string columns
+	--  Ensuring categorical columns (Sex, RaceDesc, RecruitmentSource, Department) 
+	-- are normalized, trim string columns
 	update hr_stage0
 	set 
-		employee_name = (employee_name), 
+		employee_name = trim(employee_name), 
 		position = trim(position), 
 		state = trim(state), 
 		sex = trim(sex), 
@@ -168,18 +164,17 @@
 		performance_score = trim(performance_score);
 
 
--- Create derived columns, e.g.:
--- Tenure = DateofTermination - DateofHire
--- Age = CurrentDate - DOB
-	    -- Feature engineering. 
+	-- Create derived columns, e.g.:
+	-- Tenure = DateofTermination - DateofHire
+	-- Age = CurrentDate - DOB
+	-- Feature engineering. 
     -- adding calculated columns 
     -- tenure_in_month and tenure_in_year
 	ALTER TABLE hr_stage0
-    ADD COLUMN tenure_in_month int AFTER date_of_hire;
-    ALTER TABLE hr_stage0
-    ADD COLUMN tenure_in_year int AFTER date_of_hire;
-    alter table hr_stage0
-	add column age int after dob;
+    ADD COLUMN tenure_in_month int AFTER date_of_hire,
+	ADD COLUMN tenure_in_year int AFTER date_of_hire, 
+	ADD column age int after dob;
+  
     
     -- populate tenure column
     update hr_stage0
@@ -187,7 +182,7 @@
     update hr_stage0
     set tenure_in_year = TIMESTAMPDIFF(YEAR, date_of_hire, date_of_termination);
 	update hr_stage0
-    set age = TIMESTAMPDIFF(year, dob, curdate());
+    set age = TIMESTAMPDIFF(year, dob, CURRENT_DATE());
     
     
 -- 3. Some HR Insights
